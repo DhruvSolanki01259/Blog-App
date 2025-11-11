@@ -6,7 +6,7 @@ const Footer = () => {
 
   return (
     <footer className='bg-[#FFDAC6] text-[#4B3B2A] mt-12'>
-      <div className='max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-36'>
+      <div className='max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-12'>
         {/* Brand / About */}
         <div className='flex-1'>
           <h2 className='text-2xl font-bold text-[#7C6A0A] mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'>
