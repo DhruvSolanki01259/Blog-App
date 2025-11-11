@@ -5,12 +5,14 @@ import Profile from "./pages/Profile";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
-
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AdvanceSearch from "./pages/AdvanceSearch";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 const App = () => {
   return (
@@ -19,38 +21,61 @@ const App = () => {
         position='top-center'
         reverseOrder={false}
       />
+
       <Routes>
+        {/* All pages using common layout */}
         <Route element={<Layout />}>
           <Route
             path='/'
             element={<Home />}
           />
           <Route
-            path='/profile'
-            element={<Profile />}
-          />
-          <Route
             path='/about'
             element={<About />}
-          />
-          <Route
-            path='/contact'
-            element={<Contact />}
           />
           <Route
             path='/advance-search'
             element={<AdvanceSearch />}
           />
+
+          {/* Protected pages */}
+          <Route
+            path='/profile'
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/contact'
+            element={
+              <ProtectedRoute>
+                <Contact />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
+        {/* Public routes (auth pages) */}
         <Route
           path='/signup'
-          element={<SignUp />}
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
         />
         <Route
           path='/login'
-          element={<LogIn />}
+          element={
+            <PublicRoute>
+              <LogIn />
+            </PublicRoute>
+          }
         />
+
+        {/* 404 Page */}
         <Route
           path='*'
           element={<NotFound />}

@@ -3,19 +3,50 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
+import { useAuthStore } from "../store/auth.store";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const navigate = useNavigate();
+  const { isLoading, error, login, clearError } = useAuthStore();
 
-  const isLoading = false;
-  const error = null;
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // handle your login logic here
+    clearError();
+
+    if (!email.trim() || !password.trim()) {
+      toast.error("Please fill all the required fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      const result = await login({ email, password });
+
+      if (result?.user) {
+        toast.success("Logged In Successfully!");
+        navigate("/");
+      } else {
+        toast.error(result?.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast.error("Something went wrong. Please try again later.");
+    }
   };
 
   return (

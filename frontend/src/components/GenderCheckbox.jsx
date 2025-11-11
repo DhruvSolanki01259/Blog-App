@@ -7,8 +7,8 @@ const GenderCheckbox = ({ selectedGender, onCheckboxChange }) => {
           type='radio'
           name='gender'
           value='boy'
-          checked={selectedGender === "male"}
-          onChange={() => onCheckboxChange("male")}
+          checked={selectedGender === "boy"}
+          onChange={() => onCheckboxChange("boy")}
           className='w-4 h-4 accent-[#FA9500]'
         />
         <span className='text-[#7C6A0A] font-medium'>Male</span>
@@ -20,8 +20,8 @@ const GenderCheckbox = ({ selectedGender, onCheckboxChange }) => {
           type='radio'
           name='gender'
           value='girl'
-          checked={selectedGender === "female"}
-          onChange={() => onCheckboxChange("female")}
+          checked={selectedGender === "girl"}
+          onChange={() => onCheckboxChange("girl")}
           className='w-4 h-4 accent-[#FA9500]'
         />
         <span className='text-[#7C6A0A] font-medium'>Female</span>

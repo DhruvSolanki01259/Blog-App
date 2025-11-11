@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, Sun, Moon } from "lucide-react";
+import { Menu, X, Search, Sun, Moon, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/auth.store";
+import { useThemeStore } from "../store/theme.store";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,18 +11,33 @@ const Header = () => {
   const navigate = useNavigate();
   const APP_NAME = import.meta.env.VITE_APP_NAME || "Blog App";
 
+  const { user, isAuthenticated, logout } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
+
+  // Apply theme to document root
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   const handleNavigate = (path) => {
     navigate(path);
     setIsOpen(false);
   };
 
-  const tabAnimation = {
-    hidden: { opacity: 0, y: -10 },
-    visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1 } }),
+  const handleLogout = () => {
+    logout?.();
+    setIsOpen(false);
+    navigate("/login");
   };
 
-  // Hard-coded theme for now
-  const [theme, setTheme] = useState("light");
+  const tabAnimation = {
+    hidden: { opacity: 0, y: -10 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1 },
+    }),
+  };
 
   return (
     <header className='w-full fixed top-0 left-0 z-30 bg-[#FAF7F2]/80 backdrop-blur-md border-b border-[#E5D9C4] shadow-sm'>
@@ -36,7 +53,7 @@ const Header = () => {
 
         {/* 2. Search Bar */}
         <div
-          className={`hidden md:flex items-center gap-2 bg-white border border-[#E0C9A6] rounded-full px-3 py-1.5 w-64 shadow-sm transition-all duration-200 ${
+          className={`hidden lg:flex items-center gap-2 bg-white border border-[#E0C9A6] rounded-full px-3 py-1.5 w-64 shadow-sm transition-all duration-200 ${
             isSearchActive ? "ring-2 ring-[#EB6424]" : ""
           }`}>
           <Search className='w-4 h-4 text-[#7C6A0A]' />
@@ -50,9 +67,9 @@ const Header = () => {
         </div>
 
         {/* 3. Tabs */}
-        <nav className='hidden md:flex items-center gap-6 text-[#4B3B2A] font-medium'>
+        <nav className='hidden lg:flex items-center gap-6 text-[#4B3B2A] font-medium'>
           {[
-            { label: "Advance-Search", path: "/advanced-search" },
+            { label: "Advance-Search", path: "/advance-search" },
             { label: "About", path: "/about" },
             { label: "Contact", path: "/contact" },
           ].map((tab, i) => (
@@ -69,11 +86,10 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* 4. Day/Night & Signup Group */}
-        <div className='hidden md:flex items-center gap-3'>
-          {/* Day/Night Button */}
+        {/* 4. Right Group: Theme Toggle + User / SignUp */}
+        <div className='hidden lg:flex items-center gap-3'>
           <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            onClick={toggleTheme}
             className='w-10 h-10 flex items-center justify-center rounded-full bg-[#FFF9F4] border border-[#E5D9C4] hover:bg-[#EB6424] hover:text-white transition text-[#7C6A0A]'>
             {theme === "light" ? (
               <Sun className='w-5 h-5' />
@@ -82,18 +98,28 @@ const Header = () => {
             )}
           </button>
 
-          {/* Sign Up Button */}
-          <button
-            onClick={() => handleNavigate("/signup")}
-            className='px-5 py-2 rounded-full border-2 border-[#EB6424] text-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
-            Sign Up
-          </button>
+          {isAuthenticated && user ? (
+            <motion.img
+              src={user.profilePic || "/default-avatar.png"}
+              alt={user.username || "User"}
+              className='w-10 h-10 rounded-full border-2 border-[#EB6424] object-cover cursor-pointer hover:scale-105 transition'
+              onClick={() => handleNavigate("/profile")}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            />
+          ) : (
+            <button
+              onClick={() => handleNavigate("/signup")}
+              className='px-5 py-2 rounded-full border-2 border-[#EB6424] text-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
+              Sign Up
+            </button>
+          )}
         </div>
 
-        {/* Mobile Buttons: Day/Night + Menu */}
-        <div className='flex md:hidden items-center gap-2'>
+        {/* Mobile Buttons */}
+        <div className='flex lg:hidden items-center gap-2'>
           <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            onClick={toggleTheme}
             className='w-10 h-10 flex items-center justify-center rounded-full bg-[#FFF9F4] border border-[#E5D9C4] hover:bg-[#EB6424] hover:text-white transition text-[#7C6A0A]'>
             {theme === "light" ? (
               <Sun className='w-5 h-5' />
@@ -110,7 +136,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* 5. Mobile Dropdown */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -118,10 +144,10 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            className='md:hidden bg-[#FFF9F4] border-t border-[#E5D9C4] shadow-md'>
+            className='lg:hidden bg-[#FFF9F4] border-t border-[#E5D9C4] shadow-md'>
             <div className='flex flex-col px-6 py-4 space-y-3 text-[#4B3B2A] font-medium'>
               {[
-                { label: "Advance-Search", path: "/advanced-search" },
+                { label: "Advance-Search", path: "/advance-search" },
                 { label: "About", path: "/about" },
                 { label: "Contact", path: "/contact" },
               ].map((tab, i) => (
@@ -136,15 +162,41 @@ const Header = () => {
                   {tab.label}
                 </motion.button>
               ))}
-              <motion.button
-                onClick={() => handleNavigate("/signup")}
-                custom={4}
-                variants={tabAnimation}
-                initial='hidden'
-                animate='visible'
-                className='px-5 py-2 rounded-md border-2 border-[#EB6424] text-[#EB6424] bg-white hover:bg-[#EB6424] hover:text-white font-semibold transition text-center'>
-                Sign Up
-              </motion.button>
+
+              {/* Auth Section for Mobile */}
+              {isAuthenticated && user ? (
+                <div className='flex flex-col gap-3 mt-2'>
+                  <motion.button
+                    onClick={() => handleNavigate("/profile")}
+                    custom={4}
+                    variants={tabAnimation}
+                    initial='hidden'
+                    animate='visible'
+                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#EB6424] text-[#EB6424] bg-white hover:bg-[#EB6424] hover:text-white font-semibold transition'>
+                    <User className='w-5 h-5' /> Go to Profile
+                  </motion.button>
+
+                  <motion.button
+                    onClick={handleLogout}
+                    custom={5}
+                    variants={tabAnimation}
+                    initial='hidden'
+                    animate='visible'
+                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#E63946] text-[#E63946] bg-white hover:bg-[#E63946] hover:text-white font-semibold transition'>
+                    <LogOut className='w-5 h-5' /> Logout
+                  </motion.button>
+                </div>
+              ) : (
+                <motion.button
+                  onClick={() => handleNavigate("/signup")}
+                  custom={4}
+                  variants={tabAnimation}
+                  initial='hidden'
+                  animate='visible'
+                  className='px-5 py-2 rounded-md border-2 border-[#EB6424] text-[#EB6424] bg-white hover:bg-[#EB6424] hover:text-white font-semibold transition text-center'>
+                  Sign Up
+                </motion.button>
+              )}
             </div>
           </motion.div>
         )}

@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 import Input from "../components/Input";
 import GenderCheckbox from "../components/GenderCheckbox"; // Import gender component
+import { useAuthStore } from "../store/auth.store";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -12,14 +14,53 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState(""); // Gender state
 
-  const navigate = useNavigate();
+  const { isLoading, error, signup, clearError } = useAuthStore();
 
-  const isLoading = false;
-  const error = null;
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    // handle your signup logic here
+    clearError();
+
+    if (
+      !username.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !gender.trim()
+    ) {
+      toast.error("Please fill all the required fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (!["boy", "girl"].includes(gender)) {
+      toast.error("Please select a valid gender.");
+      return;
+    }
+
+    try {
+      const result = await signup({ username, email, password, gender });
+
+      if (result?.user) {
+        toast.success("Account created successfully!");
+        navigate("/");
+      } else {
+        toast.error(result?.message || "Signup failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Signup failed:", error);
+      toast.error("Something went wrong. Please try again later.");
+    }
   };
 
   return (
@@ -77,6 +118,7 @@ const SignUp = () => {
             />
 
             {/* Gender Selection */}
+            <p className='text-sm font-bold text-[#7C6A0A]'>Select Gender</p>
             <GenderCheckbox
               selectedGender={gender}
               onCheckboxChange={setGender}
