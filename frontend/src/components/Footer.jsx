@@ -40,7 +40,7 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                to='/advanced-search'
+                to='/advance-search'
                 className='hover:text-[#EB6424] hover:translate-x-1 transition-transform duration-200'>
                 Search
               </Link>
@@ -50,6 +50,13 @@ const Footer = () => {
                 to='/contact'
                 className='hover:text-[#EB6424] hover:translate-x-1 transition-transform duration-200'>
                 Contact
+              </Link>
+            </li>
+            <li>
+              <Link
+                to='/blogs'
+                className='hover:text-[#EB6424] hover:translate-x-1 transition-transform duration-200'>
+                Blogs
               </Link>
             </li>
           </ul>

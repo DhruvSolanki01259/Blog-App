@@ -28,6 +28,7 @@ export const signup = async (req, res, next) => {
       password: hashedPassword,
       gender,
       profilePic,
+      lastLogin: new Date(),
     });
     await user.save();
     const token = generateCookieAndSetToken(user._id, res);
@@ -58,6 +59,9 @@ export const login = async (req, res, next) => {
     }
 
     const token = generateCookieAndSetToken(user._id, res);
+
+    user.lastLogin = new Date();
+    await user.save();
 
     return successHandler(res, 200, "Logged In Successful", user, token);
   } catch (error) {

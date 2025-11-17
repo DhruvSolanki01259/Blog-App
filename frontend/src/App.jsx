@@ -1,18 +1,20 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+import AdvanceSearch from "./pages/AdvanceSearch";
+import NotFound from "./pages/NotFound";
+import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
-import Home from "./pages/Home";
 import About from "./pages/About";
-import Contact from "./pages/Contact";
-import AdvanceSearch from "./pages/AdvanceSearch";
-import NotFound from "./pages/NotFound";
+import Home from "./pages/Home";
 import Layout from "./components/Layout";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import Blogs from "./pages/Blogs";
+import DashBoard from "./pages/DashBoard";
 
 const App = () => {
   return (
@@ -23,7 +25,6 @@ const App = () => {
       />
 
       <Routes>
-        {/* All pages using common layout */}
         <Route element={<Layout />}>
           <Route
             path='/'
@@ -34,11 +35,15 @@ const App = () => {
             element={<About />}
           />
           <Route
+            path='/contact'
+            element={<Contact />}
+          />
+          <Route
             path='/advance-search'
             element={<AdvanceSearch />}
           />
 
-          {/* Protected pages */}
+          {/* Auth Protected pages */}
           <Route
             path='/profile'
             element={
@@ -47,17 +52,28 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
-            path='/contact'
+            path='/blogs'
             element={
               <ProtectedRoute>
-                <Contact />
+                <Blogs />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin-only route */}
+          <Route
+            path='/admin/dashboard'
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <DashBoard />
               </ProtectedRoute>
             }
           />
         </Route>
 
-        {/* Public routes (auth pages) */}
+        {/* Public Auth Pages */}
         <Route
           path='/signup'
           element={
@@ -75,7 +91,7 @@ const App = () => {
           }
         />
 
-        {/* 404 Page */}
+        {/* 404 Fallback */}
         <Route
           path='*'
           element={<NotFound />}

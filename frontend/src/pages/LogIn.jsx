@@ -11,7 +11,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { isLoading, error, login, clearError } = useAuthStore();
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -19,13 +18,13 @@ const Login = () => {
     clearError();
 
     if (!email.trim() || !password.trim()) {
-      toast.error("Please fill all the required fields.");
+      toast.error("Please fill all required fields.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address.");
+      toast.error("Enter a valid email address.");
       return;
     }
 
@@ -37,15 +36,15 @@ const Login = () => {
     try {
       const result = await login({ email, password });
 
-      if (result?.user) {
-        toast.success("Logged In Successfully!");
+      if (result?.success) {
+        toast.success("Logged in successfully!");
         navigate("/");
       } else {
-        toast.error(result?.message || "Login failed. Please try again.");
+        toast.error(result?.message || "Invalid credentials.");
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      toast.error("Something went wrong. Please try again later.");
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error("Something went wrong. Try again later.");
     }
   };
 
@@ -56,7 +55,7 @@ const Login = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className='flex flex-col md:flex-row max-w-4xl w-full md:bg-white rounded-2xl md:shadow-lg overflow-hidden'>
-        {/* Left Side - Login Form */}
+        {/* Left Side */}
         <div className='w-full md:w-1/2 max-w-md mx-auto md:mx-0 bg-[#FFDAC6]/20 backdrop-blur-md border border-[#BABD8D]/30 p-8 rounded-2xl md:rounded-l-2xl md:rounded-r-none'>
           <h2 className='text-3xl font-bold text-center mb-6 text-[#7C6A0A]'>
             Welcome Back! Please Login
@@ -82,7 +81,7 @@ const Login = () => {
 
             {error && (
               <p className='text-[#EB6424] text-sm font-semibold mt-1'>
-                {error}
+                {error.message}
               </p>
             )}
 
@@ -92,9 +91,9 @@ const Login = () => {
               type='submit'
               disabled={isLoading}
               className='mt-4 w-full py-3 px-4 font-semibold text-white 
-              rounded-lg bg-gradient-to-r from-[#FA9500] to-[#EB6424]
-              shadow-md hover:shadow-lg transition duration-300 focus:ring-2 
-              focus:ring-[#FA9500]/50 focus:outline-none'>
+                rounded-lg bg-gradient-to-r from-[#FA9500] to-[#EB6424]
+                shadow-md hover:shadow-lg transition duration-300 focus:ring-2 
+                focus:ring-[#FA9500]/50 focus:outline-none'>
               {isLoading ? (
                 <Loader className='w-6 h-6 animate-spin mx-auto' />
               ) : (
@@ -115,7 +114,7 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Side - Image and Message */}
+        {/* Right Side */}
         <div className='hidden md:flex w-1/2 flex-col items-center justify-center p-8 bg-[#FFFAF0]'>
           <img
             src='/login-side-image.png'

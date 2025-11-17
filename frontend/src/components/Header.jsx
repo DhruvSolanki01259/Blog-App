@@ -30,6 +30,13 @@ const Header = () => {
     navigate("/login");
   };
 
+  const navLinks = [
+    { label: "Blogs", path: "/blogs" },
+    { label: "Advance-Search", path: "/advance-search" },
+    { label: "About", path: "/about" },
+    { label: "Contact", path: "/contact" },
+  ];
+
   const tabAnimation = {
     hidden: { opacity: 0, y: -10 },
     visible: (i) => ({
@@ -42,7 +49,7 @@ const Header = () => {
   return (
     <header className='w-full fixed top-0 left-0 z-30 bg-[#FAF7F2]/80 backdrop-blur-md border-b border-[#E5D9C4] shadow-sm'>
       <div className='max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4'>
-        {/* 1. App Name */}
+        {/* Logo / App Name */}
         <motion.h1
           onClick={() => handleNavigate("/")}
           className='text-2xl sm:text-3xl font-bold tracking-tight cursor-pointer whitespace-nowrap select-none bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
@@ -51,7 +58,7 @@ const Header = () => {
           {APP_NAME}
         </motion.h1>
 
-        {/* 2. Search Bar */}
+        {/* Desktop Search Bar */}
         <div
           className={`hidden lg:flex items-center gap-2 bg-white border border-[#E0C9A6] rounded-full px-3 py-1.5 w-64 shadow-sm transition-all duration-200 ${
             isSearchActive ? "ring-2 ring-[#EB6424]" : ""
@@ -66,13 +73,9 @@ const Header = () => {
           />
         </div>
 
-        {/* 3. Tabs */}
+        {/* Desktop Navigation Tabs */}
         <nav className='hidden lg:flex items-center gap-6 text-[#4B3B2A] font-medium'>
-          {[
-            { label: "Advance-Search", path: "/advance-search" },
-            { label: "About", path: "/about" },
-            { label: "Contact", path: "/contact" },
-          ].map((tab, i) => (
+          {navLinks.map((tab, i) => (
             <motion.a
               key={tab.path}
               onClick={() => handleNavigate(tab.path)}
@@ -86,7 +89,7 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* 4. Right Group: Theme Toggle + User / SignUp */}
+        {/* Desktop Right Section */}
         <div className='hidden lg:flex items-center gap-3'>
           <button
             onClick={toggleTheme}
@@ -136,7 +139,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* 5. Mobile Dropdown */}
+      {/* Mobile Dropdown */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -146,11 +149,7 @@ const Header = () => {
             transition={{ duration: 0.25 }}
             className='lg:hidden bg-[#FFF9F4] border-t border-[#E5D9C4] shadow-md'>
             <div className='flex flex-col px-6 py-4 space-y-3 text-[#4B3B2A] font-medium'>
-              {[
-                { label: "Advance-Search", path: "/advance-search" },
-                { label: "About", path: "/about" },
-                { label: "Contact", path: "/contact" },
-              ].map((tab, i) => (
+              {navLinks.map((tab, i) => (
                 <motion.button
                   key={tab.path}
                   onClick={() => handleNavigate(tab.path)}
@@ -163,7 +162,7 @@ const Header = () => {
                 </motion.button>
               ))}
 
-              {/* Auth Section for Mobile */}
+              {/* Mobile Auth Section */}
               {isAuthenticated && user ? (
                 <div className='flex flex-col gap-3 mt-2'>
                   <motion.button
