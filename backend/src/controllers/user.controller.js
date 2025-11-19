@@ -12,7 +12,28 @@ export const getBlogs = async (req, res) => {
       blogs,
     });
   } catch (error) {
-    console.log("Get Blogs Error:", error.message);
+    console.error("Get Blogs Error:", error.message);
+    return errorHandler(res, 500, "Internal Server Error");
+  }
+};
+
+export const getSlugBlogs = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const blog = await Blog.findOne({ slug });
+    if (!blog) {
+      return errorHandler(res, 404, "Blog Not Found");
+    }
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Slug Blog Fetched Successfully!!!",
+      blog,
+    });
+  } catch (error) {
+    console.error("Get Slug Blogs Error:", error.message);
     return errorHandler(res, 500, "Internal Server Error");
   }
 };

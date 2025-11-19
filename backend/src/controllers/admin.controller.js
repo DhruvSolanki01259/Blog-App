@@ -30,7 +30,7 @@ export const getBlogs = async (req, res) => {
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, image, category } = req.body;
+    const { title, content, image, category, isFeatured } = req.body;
 
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -60,6 +60,7 @@ export const createBlog = async (req, res) => {
       content,
       image,
       category,
+      isFeatured,
     });
 
     await blog.save();
@@ -78,7 +79,7 @@ export const createBlog = async (req, res) => {
 
 export const updateBlog = async (req, res) => {
   try {
-    const { title, content, image, category } = req.body;
+    const { title, content, image, category, isFeatured } = req.body;
     const { id } = req.params;
 
     const user = await User.findById(req.user._id);
@@ -118,6 +119,7 @@ export const updateBlog = async (req, res) => {
     if (content) blog.content = content;
     if (image) blog.image = image;
     if (category) blog.category = category;
+    if (isFeatured) blog.isFeatured = isFeatured;
 
     await blog.save();
     return res.status(200).json({

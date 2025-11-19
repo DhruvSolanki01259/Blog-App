@@ -15,6 +15,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import Blogs from "./pages/Blogs";
 import DashBoard from "./pages/DashBoard";
+import BlogDetails from "./components/BlogDetails";
 
 const App = () => {
   return (
@@ -42,6 +43,14 @@ const App = () => {
             path='/advance-search'
             element={<AdvanceSearch />}
           />
+          <Route
+            path='/blogs'
+            element={<Blogs />}
+          />
+          <Route
+            path='/blogs/:slug'
+            element={<BlogDetails />}
+          />
 
           {/* Auth Protected pages */}
           <Route
@@ -49,15 +58,6 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Profile />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path='/blogs'
-            element={
-              <ProtectedRoute>
-                <Blogs />
               </ProtectedRoute>
             }
           />

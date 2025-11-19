@@ -38,6 +38,12 @@ const blogSchema = new mongoose.Schema(
       default: "uncategorized",
       index: true,
     },
+
+    isFeatured: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { timestamps: true }
 );
