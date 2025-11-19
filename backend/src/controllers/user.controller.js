@@ -1,5 +1,21 @@
+import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/responseHandler.js";
+
+export const getBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Blogs Fetched Successfully!!!",
+      blogs,
+    });
+  } catch (error) {
+    console.log("Get Blogs Error:", error.message);
+    return errorHandler(res, 500, "Internal Server Error");
+  }
+};
 
 export const editProfile = async (req, res) => {
   try {
