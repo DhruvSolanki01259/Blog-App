@@ -48,7 +48,7 @@ const Contact = () => {
     } else {
       setName(user?.username || "");
       setEmail(user?.email || "");
-      console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
+      // console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
     }
   }, [isAuthenticated, user]);
 

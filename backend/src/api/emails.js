@@ -11,7 +11,7 @@ export const contactEmail = async (to, subject, htmlContent) => {
       subject,
       html: htmlContent,
     });
-    console.log("Email sent:", response);
+    // console.log("Email sent:", response);
     return response;
   } catch (error) {
     console.error("Error sending email:", error);
