@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  contactAdmin,
   editProfile,
   getBlogs,
   getSlugBlogs,
@@ -11,6 +12,7 @@ const router = express.Router();
 router.get("/blogs", getBlogs);
 router.get("/blogs/:slug", getSlugBlogs);
 
+router.post("/contact", contactAdmin);
 router.put("/edit-profile", verifyToken, editProfile);
 
 export default router;

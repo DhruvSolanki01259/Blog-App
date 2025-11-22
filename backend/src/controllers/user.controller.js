@@ -1,3 +1,5 @@
+import { contactEmailTemplate } from "../api/email.templates.js";
+import { contactEmail } from "../api/emails.js";
 import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/responseHandler.js";
@@ -75,6 +77,30 @@ export const editProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Edit Profile Error:", error.message);
+    return errorHandler(res, 500, "Internal Server Error");
+  }
+};
+
+export const contactAdmin = async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return errorHandler(res, 400, "All fields are required");
+    }
+
+    const emailSubject = `New Contact Message from ${name}`;
+    const emailTemplate = contactEmailTemplate(name, email, message);
+
+    await contactEmail(process.env.ADMIN_EMAIL, emailSubject, emailTemplate);
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Contact Email Sent Successfully!",
+    });
+  } catch (error) {
+    console.error("Contact Error:", error.message);
     return errorHandler(res, 500, "Internal Server Error");
   }
 };

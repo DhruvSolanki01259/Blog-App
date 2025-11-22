@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
 import { adminData } from "../data/admin.data";
 import { useThemeStore } from "../store/theme.store";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -28,6 +30,43 @@ const Contact = () => {
   const inputText = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
   const inputBorder = isLight ? "border-[#E4DCC7]" : "border-[#4B4B5A]";
 
+  // Form state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Form submit handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!name || !email || !message) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post("http://localhost:8000/api/user/contact", {
+        name,
+        email,
+        message,
+      });
+
+      toast.success("Message sent successfully!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Failed to send message. Try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section
       className={`min-h-screen w-full py-16 px-4 sm:px-6 md:px-10 lg:px-16 flex justify-center ${
@@ -44,13 +83,11 @@ const Contact = () => {
               Get In Touch
             </span>
           </h1>
-
           <p
             className={`mt-3 sm:mt-4 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium px-2 ${subTextColor}`}>
             Have feedback, questions, or ideas? I’d love to hear from you. Reach
             out anytime — I’m always listening.
           </p>
-
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "120px" }}
@@ -99,7 +136,7 @@ const Contact = () => {
           ))}
         </div>
 
-        {/* FORM */}
+        {/* Form */}
         <motion.div
           {...fadeUp(0.4)}
           className={`${bgContainer} backdrop-blur-xl shadow-lg hover:shadow-2xl border ${borderColor} rounded-3xl p-7 sm:p-10 md:p-12 lg:p-14 transition-all duration-300 w-full max-w-4xl mx-auto`}>
@@ -108,7 +145,9 @@ const Contact = () => {
             Send a Message
           </h2>
 
-          <form className='space-y-6 sm:space-y-7'>
+          <form
+            className='space-y-6 sm:space-y-7'
+            onSubmit={handleSubmit}>
             {/* Full Name */}
             <div className='relative'>
               <User
@@ -117,6 +156,8 @@ const Contact = () => {
               <input
                 type='text'
                 placeholder='Your full name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
@@ -129,6 +170,8 @@ const Contact = () => {
               <input
                 type='email'
                 placeholder='Your email address'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
@@ -139,19 +182,25 @@ const Contact = () => {
                 className={`absolute top-3 left-3 w-5 h-5 ${iconColor}`}
               />
               <textarea
-                rows='5'
                 placeholder='Write your message...'
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base`}
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base overflow-hidden`}
               />
             </div>
 
             {/* Button */}
             <div className='flex justify-center'>
               <button
-                type='button'
-                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base'>
+                type='submit'
+                disabled={loading}
+                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed'>
                 <Send className='w-5 h-5' />
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </button>
             </div>
           </form>
