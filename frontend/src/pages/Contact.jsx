@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
 import { adminData } from "../data/admin.data";
 import { useThemeStore } from "../store/theme.store";
+import { useAuthStore } from "../store/auth.store";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -13,7 +15,10 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Contact = () => {
+  const { isAuthenticated, user } = useAuthStore();
   const { theme } = useThemeStore();
+  const navigate = useNavigate();
+
   const emailContent = adminData.email;
   const phoneContent = adminData.phone;
   const addressContent = adminData.address;
@@ -30,38 +35,59 @@ const Contact = () => {
   const inputText = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
   const inputBorder = isLight ? "border-[#E4DCC7]" : "border-[#4B4B5A]";
 
-  // Form state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // Prefill name/email if user is logged in
+  const [name, setName] = useState(user?.username || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Form submit handler
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setName("");
+      setEmail("");
+    } else {
+      setName(user?.username || "");
+      setEmail(user?.email || "");
+      // console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
+    }
+  }, [isAuthenticated, user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !message) {
+    if (!user || !isAuthenticated) {
+      toast.error("You must be logged in to send a message!");
+      navigate("/login");
+      return;
+    }
+
+    if (!name || !email || !message.trim()) {
       toast.error("Please fill in all fields!");
       return;
     }
 
     setLoading(true);
+
     try {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
         {
           name,
           email,
-          message,
+          message: message.trim(),
         }
       );
 
       toast.success("Message sent successfully!");
-      setName("");
-      setEmail("");
+
       setMessage("");
+
+      // reset textarea height
+      setTimeout(() => {
+        const textarea = document.querySelector("#contact-message");
+        if (textarea) textarea.style.height = "25px";
+      }, 0);
     } catch (error) {
-      console.error(error);
       toast.error(
         error.response?.data?.message || "Failed to send message. Try again."
       );
@@ -160,6 +186,7 @@ const Contact = () => {
                 type='text'
                 placeholder='Your full name'
                 value={name}
+                readOnly={!!user}
                 onChange={(e) => setName(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
@@ -174,6 +201,7 @@ const Contact = () => {
                 type='email'
                 placeholder='Your email address'
                 value={email}
+                readOnly={!!user}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
@@ -189,10 +217,14 @@ const Contact = () => {
                 value={message}
                 onChange={(e) => {
                   setMessage(e.target.value);
-                  e.target.style.height = "auto";
-                  e.target.style.height = `${e.target.scrollHeight}px`;
+                  e.target.style.height = "25px"; // minimum height
+                  e.target.style.height = `${Math.max(
+                    e.target.scrollHeight,
+                    25
+                  )}px`; // auto expand
                 }}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base overflow-hidden`}
+                style={{ minHeight: "25px" }}
               />
             </div>
 
