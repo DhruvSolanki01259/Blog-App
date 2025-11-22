@@ -56,7 +56,7 @@ const PreviewSplash = ({ onComplete, theme }) => {
           }}>
           {/* Logo + Title */}
           <motion.div
-            className='flex flex-col sm:flex-row items-center gap-1 sm:gap-3 px-6'
+            className='flex flex-col sm:flex-row items-center sm:gap-3 px-6'
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{
               scale: 1,
