@@ -3,7 +3,7 @@ import { create } from "zustand";
 import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_API_URL}/api/auth`;
-axios.defaults.withCredentials = true; // send cookies automatically
+axios.defaults.withCredentials = true;
 
 export const useAuthStore = create(
   persist(
@@ -23,8 +23,7 @@ export const useAuthStore = create(
             password,
             gender,
           });
-
-          if (!data?.success) throw new Error(data?.message || "Signup Failed");
+          if (!data?.user) throw new Error("Invalid Server Response");
 
           set({
             user: data.user,
@@ -54,8 +53,7 @@ export const useAuthStore = create(
             email,
             password,
           });
-
-          if (!data?.success) throw new Error(data?.message || "Login Failed");
+          if (!data?.user) throw new Error("Invalid Server Response");
 
           set({
             user: data.user,
@@ -70,7 +68,7 @@ export const useAuthStore = create(
           set({
             isLoading: false,
             error:
-              error.response?.data?.message ||
+              error.response?.data ||
               error.message ||
               "Login failed. Please check your credentials.",
           });
@@ -80,12 +78,14 @@ export const useAuthStore = create(
       logout: async () => {
         try {
           set({ isLoading: true, error: null });
-          await axios.post(`${API_URL}/logout`);
+          const res = await axios.post(`${API_URL}/logout`);
+          if (!res) throw new Error("Invalid Server Response");
+          return;
         } catch (error) {
           console.error("Logout Error:", error.response?.data || error.message);
           set({
-            error:
-              error.response?.data?.message || error.message || "Logout Failed",
+            isLoading: false,
+            error: error.response?.data || error.message || "Logout Failed",
           });
         } finally {
           set({
