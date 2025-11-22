@@ -23,16 +23,10 @@ const Profile = () => {
   if (!user) return null;
 
   // background colors
-  const bgPrimary = theme === "dark" ? "bg-[#1F1F1F]" : "bg-[#FBF9F2]";
-  const cardBg = theme === "dark" ? "bg-[#2A2A2A]/95" : "bg-white/95";
-  const cardBorder = theme === "dark" ? "border-[#3B3B3B]" : "border-[#E9E2CE]";
+  const cardBorder = theme === "dark" ? "border-[#444242]" : "border-[#E9E2CE]";
   const textPrimary = theme === "dark" ? "text-[#EDEDED]" : "text-[#2B2B2B]";
   const textSecondary = theme === "dark" ? "text-[#A8A49D]" : "text-[#6F6652]";
   const textAccent = theme === "dark" ? "text-[#FA9500]" : "text-[#7C6A0A]";
-  const btnBg = theme === "dark" ? "bg-[#FA9500]/90" : "bg-[#FA9500]";
-  const btnHover =
-    theme === "dark" ? "hover:bg-[#EB6424]" : "hover:bg-[#FA9500]/90";
-  const inputBg = theme === "dark" ? "bg-[#2F2F2F]" : "bg-[#FFFCF7]";
   const inputBorder =
     theme === "dark" ? "border-[#3B3B3B]" : "border-[#EADFCB]";
 
@@ -224,7 +218,7 @@ const InfoItem = ({ icon, label, value, theme }) => (
   <div
     className={`flex items-center gap-4 p-4 rounded-xl border ${
       theme === "dark"
-        ? "border-[#555] bg-[#2A2A2A]/75"
+        ? "border-[#555] bg-[#3b3b4f]/75"
         : "border-[#EADFCB] bg-white/75"
     } shadow-sm hover:shadow-md`}>
     <span className='text-[#C67A0E] text-lg'>{icon}</span>
