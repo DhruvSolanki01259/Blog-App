@@ -15,8 +15,8 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Contact = () => {
-  const { isAuthenticated, user } = useAuthStore();
   const { theme } = useThemeStore();
+  const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
 
   const emailContent = adminData.email;
@@ -48,7 +48,6 @@ const Contact = () => {
     } else {
       setName(user?.username || "");
       setEmail(user?.email || "");
-      // console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
     }
   }, [isAuthenticated, user]);
 
@@ -61,33 +60,23 @@ const Contact = () => {
       return;
     }
 
-    if (!name || !email || !message.trim()) {
+    if (!name || !email || !message) {
       toast.error("Please fill in all fields!");
       return;
     }
 
     setLoading(true);
-
     try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
-        {
-          name,
-          email,
-          message: message.trim(),
-        }
-      );
+      await axios.post("http://localhost:8000/api/user/contact", {
+        name,
+        email,
+        message,
+      });
 
       toast.success("Message sent successfully!");
-
-      setMessage("");
-
-      // reset textarea height
-      setTimeout(() => {
-        const textarea = document.querySelector("#contact-message");
-        if (textarea) textarea.style.height = "25px";
-      }, 0);
+      setMessage(""); // only clear message
     } catch (error) {
+      console.error(error);
       toast.error(
         error.response?.data?.message || "Failed to send message. Try again."
       );
