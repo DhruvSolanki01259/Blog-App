@@ -21,8 +21,8 @@ app.use(express.json());
 
 app.use(
   cors({
-    // origin: process.env.CLIENT_URL,
-    origin: "https://web-blogify.vercel.app",
+    origin: process.env.CLIENT_URL,
+    // origin: "https://web-blogify.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
