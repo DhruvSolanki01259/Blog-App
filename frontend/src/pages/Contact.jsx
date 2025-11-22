@@ -15,9 +15,6 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Contact = () => {
-  const API_URL = `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`;
-  console.log(API_URL);
-
   const { isAuthenticated, user } = useAuthStore();
   const { theme } = useThemeStore();
   const navigate = useNavigate();
@@ -51,6 +48,7 @@ const Contact = () => {
     } else {
       setName(user?.username || "");
       setEmail(user?.email || "");
+      console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
     }
   }, [isAuthenticated, user]);
 
@@ -71,11 +69,14 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      await axios.post(API_URL, {
-        name,
-        email,
-        message: message.trim(),
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
+        {
+          name,
+          email,
+          message: message.trim(),
+        }
+      );
 
       toast.success("Message sent successfully!");
 

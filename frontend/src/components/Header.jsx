@@ -207,20 +207,6 @@ const Header = () => {
             }`}>
             <div
               className={`flex flex-col px-6 py-4 space-y-3 font-medium ${textColor}`}>
-              {/* LOGO + APP NAME IN MOBILE */}
-              <div
-                className='flex items-center gap-3 mb-3 cursor-pointer'
-                onClick={() => handleNavigate("/")}>
-                <img
-                  src={logoSrc}
-                  alt='Blogify Logo'
-                  className='h-12 w-auto object-contain'
-                />
-                <span className='text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'>
-                  Blogify
-                </span>
-              </div>
-
               {/* SEARCH TAB */}
               <motion.button
                 onClick={() => handleNavigate("/advance-search")}
