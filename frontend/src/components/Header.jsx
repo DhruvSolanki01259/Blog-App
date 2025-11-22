@@ -156,6 +156,7 @@ const Header = () => {
 
         {/* MOBILE RIGHT */}
         <div className='flex lg:hidden items-center gap-2'>
+          {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
             className={`w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#EB6424] hover:text-white transition ${btnBg}`}>
@@ -166,10 +167,19 @@ const Header = () => {
             )}
           </button>
 
+          {/* Menu/X Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 rounded-md ${textColor} hover:bg-opacity-10 hover:bg-current transition`}>
-            {isOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
+            className='group p-2 rounded-md transition'>
+            {isOpen ? (
+              <X
+                className={`w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]`}
+              />
+            ) : (
+              <Menu
+                className={`w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]`}
+              />
+            )}
           </button>
         </div>
       </div>
@@ -189,6 +199,17 @@ const Header = () => {
             }`}>
             <div
               className={`flex flex-col px-6 py-4 space-y-3 font-medium ${textColor}`}>
+              {/* SEARCH TAB */}
+              <motion.button
+                onClick={() => handleNavigate("/advance-search")}
+                custom={navLinks.length} // sequential animation
+                variants={tabAnimation}
+                initial='hidden'
+                animate='visible'
+                className='text-left rounded-md px-3 py-2 hover:bg-[#EB6424]/15 transition'>
+                Search
+              </motion.button>
+
               {navLinks.map((tab, i) => (
                 <motion.button
                   key={tab.path}
@@ -202,22 +223,22 @@ const Header = () => {
                 </motion.button>
               ))}
 
-              {/* Mobile Auth */}
+              {/* Mobile Auth Buttons */}
               {isAuthenticated ? (
                 <>
                   <motion.button
                     onClick={() => handleNavigate("/profile")}
-                    custom={4}
+                    custom={navLinks.length + 1}
                     variants={tabAnimation}
                     initial='hidden'
                     animate='visible'
                     className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
-                    <User className='w-5 h-5' /> Profile
+                    <User className='w-5 h-5' /> Go to Profile
                   </motion.button>
 
                   <motion.button
                     onClick={handleLogout}
-                    custom={5}
+                    custom={navLinks.length + 2}
                     variants={tabAnimation}
                     initial='hidden'
                     animate='visible'
@@ -228,7 +249,7 @@ const Header = () => {
               ) : (
                 <motion.button
                   onClick={() => handleNavigate("/signup")}
-                  custom={4}
+                  custom={navLinks.length + 1}
                   variants={tabAnimation}
                   initial='hidden'
                   animate='visible'

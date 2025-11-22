@@ -71,7 +71,7 @@ const BlogDetails = () => {
 
         {/* CONTENT */}
         <div
-          className={`prose prose-lg max-w-none leading-relaxed ${
+          className={`prose prose-lg max-w-none leading-relaxed text-justify ${
             theme === "light" ? "text-[#3F3A32]" : "text-[#DCDCDC]"
           }`}>
           {blog.content.split("\n").map((para, i) => (

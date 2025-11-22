@@ -345,7 +345,7 @@ const DashBoard = () => {
               {/* IMAGE UPLOAD */}
               <div>
                 <label
-                  className={`block text-sm mb-2 flex items-center gap-2 ${
+                  className={`block text-sm mb-2 items-center gap-2 ${
                     isLight ? "text-[#6F6652]" : "text-[#CFCFCF]"
                   }`}>
                   <ImageIcon size={16} /> Cover Image
