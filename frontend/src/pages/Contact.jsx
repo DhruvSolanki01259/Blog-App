@@ -70,7 +70,8 @@ const Contact = () => {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
+        // `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
+        "https://blog-app-29yr.onrender.com/api/user/contact",
         {
           name,
           email,
