@@ -46,8 +46,7 @@ const Profile = () => {
   };
 
   return (
-    <section
-      className={`min-h-screen w-full flex justify-center py-16 px-4 ${bgPrimary}`}>
+    <section className='min-h-screen w-full flex justify-center py-16 px-4'>
       <motion.div
         {...fadeUp(0)}
         className={`relative w-full max-w-5xl ${cardBg} rounded-3xl p-6 sm:p-10 border ${cardBorder} shadow-lg`}>
