@@ -11,7 +11,6 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
-  const APP_NAME = import.meta.env.VITE_APP_NAME || "Blog App";
 
   const { user, isAuthenticated, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
@@ -63,18 +62,31 @@ const Header = () => {
       ? "bg-[#FFF9F4] border-[#E5D9C4] text-[#7C6A0A]"
       : "bg-[#2B2B3A] border-[#4B4B5A] text-[#E0E0E0]";
 
+  const logoSrc =
+    theme === "dark" ? "/dark-mode-logo.png" : "/light-mode-logo.png";
+
   return (
     <header
       className={`w-full fixed top-0 left-0 z-30 backdrop-blur-md border-b shadow-sm ${headerBg}`}>
       <div className='max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4'>
-        {/* LOGO */}
-        <motion.h1
-          onClick={() => handleNavigate("/")}
-          className='text-2xl sm:text-3xl font-bold cursor-pointer bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}>
-          {APP_NAME}
-        </motion.h1>
+        {/* LOGO + APP NAME */}
+        <div
+          className='flex items-center  cursor-pointer'
+          onClick={() => handleNavigate("/")}>
+          <motion.img
+            src={logoSrc}
+            alt='Blogify Logo'
+            className='h-14 sm:h-20 w-auto object-contain'
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          />
+          <motion.span
+            className='text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}>
+            Blogify
+          </motion.span>
+        </div>
 
         {/* DESKTOP SEARCH */}
         <div
@@ -172,13 +184,9 @@ const Header = () => {
             onClick={() => setIsOpen(!isOpen)}
             className='group p-2 rounded-md transition'>
             {isOpen ? (
-              <X
-                className={`w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]`}
-              />
+              <X className='w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]' />
             ) : (
-              <Menu
-                className={`w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]`}
-              />
+              <Menu className='w-6 h-6 transition-colors text-current group-hover:text-[#EB6424]' />
             )}
           </button>
         </div>
@@ -199,10 +207,24 @@ const Header = () => {
             }`}>
             <div
               className={`flex flex-col px-6 py-4 space-y-3 font-medium ${textColor}`}>
+              {/* LOGO + APP NAME IN MOBILE */}
+              <div
+                className='flex items-center gap-3 mb-3 cursor-pointer'
+                onClick={() => handleNavigate("/")}>
+                <img
+                  src={logoSrc}
+                  alt='Blogify Logo'
+                  className='h-12 w-auto object-contain'
+                />
+                <span className='text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'>
+                  Blogify
+                </span>
+              </div>
+
               {/* SEARCH TAB */}
               <motion.button
                 onClick={() => handleNavigate("/advance-search")}
-                custom={navLinks.length} // sequential animation
+                custom={navLinks.length}
                 variants={tabAnimation}
                 initial='hidden'
                 animate='visible'
