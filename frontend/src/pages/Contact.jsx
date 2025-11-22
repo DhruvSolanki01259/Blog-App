@@ -15,8 +15,9 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Contact = () => {
-  const { theme } = useThemeStore();
+  const API_URL = `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`;
   const { isAuthenticated, user } = useAuthStore();
+  const { theme } = useThemeStore();
   const navigate = useNavigate();
 
   const emailContent = adminData.email;
@@ -67,7 +68,7 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:8000/api/user/contact", {
+      await axios.post(API_URL, {
         name,
         email,
         message,
