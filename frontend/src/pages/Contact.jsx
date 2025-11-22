@@ -35,7 +35,6 @@ const Contact = () => {
   const inputText = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
   const inputBorder = isLight ? "border-[#E4DCC7]" : "border-[#4B4B5A]";
 
-  // Prefill name/email if user is logged in
   const [name, setName] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [message, setMessage] = useState("");
@@ -48,7 +47,6 @@ const Contact = () => {
     } else {
       setName(user?.username || "");
       setEmail(user?.email || "");
-      // console.log(`${import.meta.env.VITE_BACKEND_API_URL}`);
     }
   }, [isAuthenticated, user]);
 
@@ -70,20 +68,14 @@ const Contact = () => {
 
     try {
       await axios.post(
-        // `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
-        "https://blog-app-29yr.onrender.com/api/user/contact",
-        {
-          name,
-          email,
-          message: message.trim(),
-        }
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
+        { name, email, message: message.trim() }
       );
 
       toast.success("Message sent successfully!");
-
       setMessage("");
 
-      // reset textarea height
+      // Reset textarea height
       setTimeout(() => {
         const textarea = document.querySelector("#contact-message");
         if (textarea) textarea.style.height = "25px";
@@ -113,134 +105,150 @@ const Contact = () => {
               Get In Touch
             </span>
           </h1>
+
           <p
             className={`mt-3 sm:mt-4 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium px-2 ${subTextColor}`}>
             Have feedback, questions, or ideas? I’d love to hear from you. Reach
             out anytime — I’m always listening.
           </p>
+
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: "120px" }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.4 }}
-            className='h-[3px] sm:h-[4px] mt-6 mx-auto rounded-full bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
+            animate={{ width: "90px" }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className='h-[3px] mx-auto mt-4 bg-gradient-to-r from-[#FA9500] to-[#EB6424] rounded-full'
           />
         </motion.div>
 
-        {/* Contact Static Info */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16 mb-14 px-2'>
-          {[
-            {
-              icon: <Mail className='w-6 h-6' />,
-              title: "Email",
-              content: emailContent,
-            },
-            {
-              icon: <Phone className='w-6 h-6' />,
-              title: "Phone",
-              content: phoneContent,
-            },
-            {
-              icon: <MapPin className='w-6 h-6' />,
-              title: "Address",
-              content: addressContent,
-            },
-          ].map((item, idx) => (
-            <motion.div
-              key={idx}
-              {...fadeUp(0.1 * idx + 0.1)}
-              className={`${bgContainer} backdrop-blur-lg border ${borderColor} rounded-2xl p-7 sm:p-8 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center`}>
-              <div className='flex flex-col items-center gap-4'>
+        {/* Content */}
+        <div className='mt-12 grid grid-cols-1 lg:grid-cols-2 gap-10'>
+          {/* Contact Details */}
+          <motion.div
+            {...fadeUp(0.1)}
+            className={`p-6 sm:p-8 rounded-2xl border ${borderColor} ${bgContainer} shadow-md backdrop-blur-md`}>
+            <h2
+              className={`text-xl sm:text-2xl font-bold mb-6 ${headingColor}`}>
+              Contact Information
+            </h2>
+
+            <div className='space-y-6'>
+              {/* Email */}
+              <div className='flex items-center space-x-4'>
                 <div
-                  className={`p-4 rounded-full ${iconBg} ${iconColor} shadow-sm transition-all duration-300`}>
-                  {item.icon}
+                  className={`p-3 rounded-xl ${iconBg} shadow-sm ${iconColor}`}>
+                  <Mail size={22} />
                 </div>
-                <h3 className={`text-lg sm:text-xl font-bold ${headingColor}`}>
-                  {item.title}
-                </h3>
-                <p
-                  className={`text-sm sm:text-base font-medium break-all ${iconColor}`}>
-                  {item.content}
+                <p className={`font-medium ${subTextColor}`}>{emailContent}</p>
+              </div>
+
+              {/* Phone */}
+              <div className='flex items-center space-x-4'>
+                <div
+                  className={`p-3 rounded-xl ${iconBg} shadow-sm ${iconColor}`}>
+                  <Phone size={22} />
+                </div>
+                <p className={`font-medium ${subTextColor}`}>{phoneContent}</p>
+              </div>
+
+              {/* Address */}
+              <div className='flex items-center space-x-4'>
+                <div
+                  className={`p-3 rounded-xl ${iconBg} shadow-sm ${iconColor}`}>
+                  <MapPin size={22} />
+                </div>
+                <p className={`font-medium ${subTextColor}`}>
+                  {addressContent}
                 </p>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
 
-        {/* Form */}
-        <motion.div
-          {...fadeUp(0.4)}
-          className={`${bgContainer} backdrop-blur-xl shadow-lg hover:shadow-2xl border ${borderColor} rounded-3xl p-7 sm:p-10 md:p-12 lg:p-14 transition-all duration-300 w-full max-w-4xl mx-auto`}>
-          <h2
-            className={`text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-8 sm:mb-10 ${headingColor}`}>
-            Send a Message
-          </h2>
+          {/* Contact Form */}
+          <motion.form
+            {...fadeUp(0.15)}
+            onSubmit={handleSubmit}
+            className={`p-6 sm:p-8 rounded-2xl border ${borderColor} ${bgContainer} shadow-md backdrop-blur-md`}>
+            <h2
+              className={`text-xl sm:text-2xl font-bold mb-6 ${headingColor}`}>
+              Send a Message
+            </h2>
 
-          <form
-            className='space-y-6 sm:space-y-7'
-            onSubmit={handleSubmit}>
-            {/* Full Name */}
-            <div className='relative'>
-              <User
-                className={`absolute top-3.5 left-3.5 w-5 h-5 ${iconColor}`}
-              />
-              <input
-                type='text'
-                placeholder='Your full name'
-                value={name}
-                readOnly={!!user}
-                onChange={(e) => setName(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
-              />
+            {/* Name */}
+            <div className='mb-4'>
+              <label className={`text-sm font-medium ${subTextColor}`}>
+                Name
+              </label>
+              <div
+                className={`mt-1 flex items-center gap-3 rounded-xl border ${inputBorder} ${inputBg} px-4 py-3`}>
+                <User
+                  size={20}
+                  className={iconColor}
+                />
+                <input
+                  type='text'
+                  value={name}
+                  disabled
+                  className={`w-full bg-transparent outline-none ${inputText}`}
+                />
+              </div>
             </div>
 
             {/* Email */}
-            <div className='relative'>
-              <Mail
-                className={`absolute top-3.5 left-3.5 w-5 h-5 ${iconColor}`}
-              />
-              <input
-                type='email'
-                placeholder='Your email address'
-                value={email}
-                readOnly={!!user}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
-              />
+            <div className='mb-4'>
+              <label className={`text-sm font-medium ${subTextColor}`}>
+                Email
+              </label>
+              <div
+                className={`mt-1 flex items-center gap-3 rounded-xl border ${inputBorder} ${inputBg} px-4 py-3`}>
+                <Mail
+                  size={20}
+                  className={iconColor}
+                />
+                <input
+                  type='email'
+                  value={email}
+                  disabled
+                  className={`w-full bg-transparent outline-none ${inputText}`}
+                />
+              </div>
             </div>
 
             {/* Message */}
-            <div className='relative'>
-              <MessageSquare
-                className={`absolute top-3 left-3 w-5 h-5 ${iconColor}`}
-              />
-              <textarea
-                placeholder='Write your message...'
-                value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  e.target.style.height = "25px"; // minimum height
-                  e.target.style.height = `${Math.max(
-                    e.target.scrollHeight,
-                    25
-                  )}px`; // auto expand
-                }}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base overflow-hidden`}
-                style={{ minHeight: "25px" }}
-              />
+            <div className='mb-5'>
+              <label className={`text-sm font-medium ${subTextColor}`}>
+                Message
+              </label>
+              <div
+                className={`mt-1 flex items-start gap-3 rounded-xl border ${inputBorder} ${inputBg} px-4 py-3`}>
+                <MessageSquare
+                  size={20}
+                  className={iconColor}
+                />
+                <textarea
+                  id='contact-message'
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    e.target.style.height = "25px";
+                    e.target.style.height = `${e.target.scrollHeight}px`;
+                  }}
+                  placeholder='Type your message...'
+                  rows={1}
+                  className={`w-full bg-transparent resize-none outline-none overflow-hidden ${inputText}`}
+                />
+              </div>
             </div>
 
-            {/* Button */}
-            <div className='flex justify-center'>
-              <button
-                type='submit'
-                disabled={loading}
-                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed'>
-                <Send className='w-5 h-5' />
-                {loading ? "Sending..." : "Send Message"}
-              </button>
-            </div>
-          </form>
-        </motion.div>
+            {/* Submit */}
+            <button
+              type='submit'
+              disabled={loading}
+              className='mt-4 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold py-3 px-4 rounded-xl hover:opacity-90 transition active:scale-[0.98]'>
+              {loading ? "Sending..." : "Send Message"}
+              <Send size={18} />
+            </button>
+          </motion.form>
+        </div>
       </div>
     </section>
   );
