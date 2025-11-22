@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
 import { adminData } from "../data/admin.data";
 import { useThemeStore } from "../store/theme.store";
-import { useAuthStore } from "../store/auth.store";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -16,9 +14,6 @@ const fadeUp = (delay = 0) => ({
 
 const Contact = () => {
   const { theme } = useThemeStore();
-  const { isAuthenticated, user } = useAuthStore();
-  const navigate = useNavigate();
-
   const emailContent = adminData.email;
   const phoneContent = adminData.phone;
   const addressContent = adminData.address;
@@ -35,30 +30,15 @@ const Contact = () => {
   const inputText = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
   const inputBorder = isLight ? "border-[#E4DCC7]" : "border-[#4B4B5A]";
 
-  // Prefill name/email if user is logged in
-  const [name, setName] = useState(user?.username || "");
-  const [email, setEmail] = useState(user?.email || "");
+  // Form state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setName("");
-      setEmail("");
-    } else {
-      setName(user?.username || "");
-      setEmail(user?.email || "");
-    }
-  }, [isAuthenticated, user]);
-
+  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!user || !isAuthenticated) {
-      toast.error("You must be logged in to send a message!");
-      navigate("/login");
-      return;
-    }
 
     if (!name || !email || !message) {
       toast.error("Please fill in all fields!");
@@ -74,7 +54,9 @@ const Contact = () => {
       });
 
       toast.success("Message sent successfully!");
-      setMessage(""); // only clear message
+      setName("");
+      setEmail("");
+      setMessage("");
     } catch (error) {
       console.error(error);
       toast.error(
@@ -175,7 +157,6 @@ const Contact = () => {
                 type='text'
                 placeholder='Your full name'
                 value={name}
-                readOnly={!!user}
                 onChange={(e) => setName(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
@@ -190,7 +171,6 @@ const Contact = () => {
                 type='email'
                 placeholder='Your email address'
                 value={email}
-                readOnly={!!user}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
@@ -206,14 +186,10 @@ const Contact = () => {
                 value={message}
                 onChange={(e) => {
                   setMessage(e.target.value);
-                  e.target.style.height = "25px"; // minimum height
-                  e.target.style.height = `${Math.max(
-                    e.target.scrollHeight,
-                    25
-                  )}px`; // auto expand
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${e.target.scrollHeight}px`;
                 }}
                 className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base overflow-hidden`}
-                style={{ minHeight: "25px" }}
               />
             </div>
 
