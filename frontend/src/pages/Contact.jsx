@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
@@ -42,29 +42,15 @@ const Contact = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const messageRef = useRef(null);
-
-  // Update when user logs in/out
   useEffect(() => {
-    if (isAuthenticated && user) {
-      setName(user.username || "");
-      setEmail(user.email || "");
-    } else {
+    if (!isAuthenticated) {
       setName("");
       setEmail("");
+    } else {
+      setName(user?.username || "");
+      setEmail(user?.email || "");
     }
   }, [isAuthenticated, user]);
-
-  // Auto height textarea handler
-  const handleMessageChange = (e) => {
-    setMessage(e.target.value);
-
-    const el = messageRef.current;
-    if (el) {
-      el.style.height = "25px"; // reset height
-      el.style.height = `${Math.max(el.scrollHeight, 25)}px`; // auto adjust
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,20 +68,16 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      await axios.post(API_URL, {
+      await axios.post(`${API_URL}`, {
         name,
         email,
         message,
       });
 
       toast.success("Message sent successfully!");
-      setMessage("");
-
-      // Reset textarea height cleanly
-      if (messageRef.current) {
-        messageRef.current.style.height = "25px";
-      }
+      setMessage(""); // only clear message
     } catch (error) {
+      console.error(error);
       toast.error(
         error.response?.data?.message || "Failed to send message. Try again."
       );
@@ -157,7 +139,8 @@ const Contact = () => {
               {...fadeUp(0.1 * idx + 0.1)}
               className={`${bgContainer} backdrop-blur-lg border ${borderColor} rounded-2xl p-7 sm:p-8 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center`}>
               <div className='flex flex-col items-center gap-4'>
-                <div className={`p-4 rounded-full ${iconBg} ${iconColor}`}>
+                <div
+                  className={`p-4 rounded-full ${iconBg} ${iconColor} shadow-sm transition-all duration-300`}>
                   {item.icon}
                 </div>
                 <h3 className={`text-lg sm:text-xl font-bold ${headingColor}`}>
@@ -195,7 +178,7 @@ const Contact = () => {
                 value={name}
                 readOnly={!!user}
                 onChange={(e) => setName(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm`}
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
 
@@ -210,7 +193,7 @@ const Contact = () => {
                 value={email}
                 readOnly={!!user}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm`}
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
 
@@ -220,21 +203,27 @@ const Contact = () => {
                 className={`absolute top-3 left-3 w-5 h-5 ${iconColor}`}
               />
               <textarea
-                ref={messageRef}
                 placeholder='Write your message...'
                 value={message}
-                onChange={handleMessageChange}
-                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm overflow-hidden`}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  e.target.style.height = "25px"; // minimum height
+                  e.target.style.height = `${Math.max(
+                    e.target.scrollHeight,
+                    25
+                  )}px`; // auto expand
+                }}
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base overflow-hidden`}
                 style={{ minHeight: "25px" }}
               />
             </div>
 
-            {/* Submit */}
+            {/* Button */}
             <div className='flex justify-center'>
               <button
                 type='submit'
                 disabled={loading}
-                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 disabled:opacity-60 disabled:cursor-not-allowed'>
+                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed'>
                 <Send className='w-5 h-5' />
                 {loading ? "Sending..." : "Send Message"}
               </button>
