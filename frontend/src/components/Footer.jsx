@@ -29,27 +29,33 @@ const Footer = () => {
 
   return (
     <footer className={`${bgColor} ${textColor} mt-12`}>
-      <div className='max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between gap-12 items-center md:items-start'>
+      <div
+        className='
+          max-w-7xl mx-auto px-6 py-10 
+          grid grid-cols-1 md:grid-cols-3 
+          gap-12 
+        '>
         {/* Logo + App Name */}
-        <div className='flex-1 flex flex-col items-center md:items-start'>
+        <div className='flex flex-col items-start'>
           <div className='flex items-center mb-2'>
             <img
               src={logoSrc}
               alt='Blogify Logo'
               className='h-12 sm:h-16 w-auto'
             />
-            <span className='text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'>
+            <span className='text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424] ml-2'>
               {APP_NAME}
             </span>
           </div>
-          <p className={`${subTextColor} text-sm text-center md:text-left`}>
+
+          <p className={`${subTextColor} text-sm max-w-xs`}>
             Share ideas, explore insights, and discover inspiring blogs crafted
             for curious minds.
           </p>
         </div>
 
         {/* Quick Links */}
-        <div className='flex-1'>
+        <div className='flex flex-col items-start'>
           <h3 className={`text-lg font-semibold mb-2 ${headingColor}`}>
             Quick Links
           </h3>
@@ -93,14 +99,17 @@ const Footer = () => {
         </div>
 
         {/* Recent Blogs */}
-        <div className='flex-1'>
+        <div className='flex flex-col items-start'>
           <h3 className={`text-lg font-semibold mb-2 ${headingColor}`}>
             Recent Blogs
           </h3>
+
           {isLoading && <p className={`${subTextColor} text-sm`}>Loading...</p>}
+
           {!isLoading && recentBlogs.length === 0 && (
             <p className={`${subTextColor} text-sm`}>No blogs yet.</p>
           )}
+
           <ul className='space-y-2'>
             {!isLoading &&
               recentBlogs.map((blog) => (
