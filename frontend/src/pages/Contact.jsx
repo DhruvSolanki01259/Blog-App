@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, User, MessageSquare } from "lucide-react";
 import { adminData } from "../data/admin.data";
+import { useThemeStore } from "../store/theme.store";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 30 },
@@ -10,24 +11,42 @@ const fadeUp = (delay = 0) => ({
 });
 
 const Contact = () => {
+  const { theme } = useThemeStore();
   const emailContent = adminData.email;
   const phoneContent = adminData.phone;
   const addressContent = adminData.address;
 
+  const isLight = theme === "light";
+
+  const bgContainer = isLight ? "bg-white/90" : "bg-[#2A2A3C]/70";
+  const borderColor = isLight ? "border-[#efe7d9]" : "border-[#4B4B5A]";
+  const headingColor = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
+  const subTextColor = isLight ? "text-[#4b4b4b]" : "text-[#CFCFCF]";
+  const iconBg = isLight ? "bg-[#FFE6D7]" : "bg-[#4B4B5A]";
+  const iconColor = isLight ? "text-[#7C6A0A]" : "text-[#E0E0E0]";
+  const inputBg = isLight ? "bg-[#FFF8F0]" : "bg-[#3B3B4F]";
+  const inputText = isLight ? "text-[#1a1a1a]" : "text-[#E0E0E0]";
+  const inputBorder = isLight ? "border-[#E4DCC7]" : "border-[#4B4B5A]";
+
   return (
-    <section className='min-h-screen w-full py-16 px-4 sm:px-6 md:px-10 lg:px-16 flex justify-center'>
+    <section
+      className={`min-h-screen w-full py-16 px-4 sm:px-6 md:px-10 lg:px-16 flex justify-center ${
+        isLight ? "bg-[#FBF9F2]" : "bg-[#1E1E2F]"
+      }`}>
       <div className='w-full max-w-7xl'>
         {/* Header */}
         <motion.div
           {...fadeUp(0)}
           className='text-center px-2'>
-          <h1 className='text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1A1A] leading-snug'>
+          <h1
+            className={`text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-snug ${headingColor}`}>
             <span className='bg-gradient-to-r from-[#FA9500] to-[#EB6424] bg-clip-text text-transparent'>
               Get In Touch
             </span>
           </h1>
 
-          <p className='mt-3 sm:mt-4 text-sm sm:text-base md:text-lg max-w-xl mx-auto text-[#4b4b4b] font-medium px-2'>
+          <p
+            className={`mt-3 sm:mt-4 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium px-2 ${subTextColor}`}>
             Have feedback, questions, or ideas? I’d love to hear from you. Reach
             out anytime — I’m always listening.
           </p>
@@ -46,34 +65,33 @@ const Contact = () => {
             {
               icon: <Mail className='w-6 h-6' />,
               title: "Email",
-              content: `${emailContent}`,
+              content: emailContent,
             },
             {
               icon: <Phone className='w-6 h-6' />,
               title: "Phone",
-              content: `${phoneContent}`,
+              content: phoneContent,
             },
             {
               icon: <MapPin className='w-6 h-6' />,
               title: "Address",
-              content: `${addressContent}`,
+              content: addressContent,
             },
           ].map((item, idx) => (
             <motion.div
               key={idx}
               {...fadeUp(0.1 * idx + 0.1)}
-              className='group bg-white/90 backdrop-blur-lg border border-[#efe7d9] rounded-2xl p-7 sm:p-8 shadow-sm 
-              hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center'>
+              className={`${bgContainer} backdrop-blur-lg border ${borderColor} rounded-2xl p-7 sm:p-8 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center`}>
               <div className='flex flex-col items-center gap-4'>
                 <div
-                  className='p-4 rounded-full bg-[#FFE6D7] text-[#7C6A0A]
-                  group-hover:bg-[#EB6424] group-hover:text-white shadow-sm transition-all duration-300'>
+                  className={`p-4 rounded-full ${iconBg} ${iconColor} shadow-sm transition-all duration-300`}>
                   {item.icon}
                 </div>
-                <h3 className='text-lg sm:text-xl font-bold text-[#1a1a1a]'>
+                <h3 className={`text-lg sm:text-xl font-bold ${headingColor}`}>
                   {item.title}
                 </h3>
-                <p className='text-[#7C6A0A] text-sm sm:text-base font-medium break-all'>
+                <p
+                  className={`text-sm sm:text-base font-medium break-all ${iconColor}`}>
                   {item.content}
                 </p>
               </div>
@@ -84,50 +102,54 @@ const Contact = () => {
         {/* FORM */}
         <motion.div
           {...fadeUp(0.4)}
-          className='w-full max-w-4xl mx-auto rounded-3xl bg-white/90 backdrop-blur-xl shadow-lg hover:shadow-2xl border border-[#eee4d3] p-7 sm:p-10 md:p-12 lg:p-14 transition-all duration-300'>
-          <h2 className='text-xl sm:text-2xl md:text-3xl font-semibold text-center text-[#1a1a1a] mb-8 sm:mb-10'>
+          className={`${bgContainer} backdrop-blur-xl shadow-lg hover:shadow-2xl border ${borderColor} rounded-3xl p-7 sm:p-10 md:p-12 lg:p-14 transition-all duration-300 w-full max-w-4xl mx-auto`}>
+          <h2
+            className={`text-xl sm:text-2xl md:text-3xl font-semibold text-center mb-8 sm:mb-10 ${headingColor}`}>
             Send a Message
           </h2>
 
           <form className='space-y-6 sm:space-y-7'>
             {/* Full Name */}
             <div className='relative'>
-              <User className='absolute top-3.5 left-3.5 text-[#C08E42] w-5 h-5' />
+              <User
+                className={`absolute top-3.5 left-3.5 w-5 h-5 ${iconColor}`}
+              />
               <input
                 type='text'
                 placeholder='Your full name'
-                className='w-full pl-12 pr-4 py-3 rounded-lg bg-[#FFF8F0] border border-[#E4DCC7]
-                text-[#1a1a1a] focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base'
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
 
             {/* Email */}
             <div className='relative'>
-              <Mail className='absolute top-3.5 left-3.5 text-[#C08E42] w-5 h-5' />
+              <Mail
+                className={`absolute top-3.5 left-3.5 w-5 h-5 ${iconColor}`}
+              />
               <input
                 type='email'
                 placeholder='Your email address'
-                className='w-full pl-12 pr-4 py-3 rounded-lg bg-[#FFF8F0] border border-[#E4DCC7]
-                text-[#1a1a1a] focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base'
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none shadow-sm text-sm sm:text-base`}
               />
             </div>
 
             {/* Message */}
             <div className='relative'>
-              <MessageSquare className='absolute top-3 left-3 text-[#C08E42] w-5 h-5' />
+              <MessageSquare
+                className={`absolute top-3 left-3 w-5 h-5 ${iconColor}`}
+              />
               <textarea
                 rows='5'
                 placeholder='Write your message...'
-                className='w-full pl-12 pr-4 py-3 rounded-lg bg-[#FFF8F0] border border-[#E4DCC7]
-                text-[#1a1a1a] focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base'></textarea>
+                className={`w-full pl-12 pr-4 py-3 rounded-lg ${inputBg} border ${inputBorder} ${inputText} focus:ring-2 focus:ring-[#EB6424]/60 outline-none resize-none shadow-sm text-sm sm:text-base`}
+              />
             </div>
 
             {/* Button */}
             <div className='flex justify-center'>
               <button
                 type='button'
-                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424]
-                text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base'>
+                className='flex items-center gap-2 px-6 sm:px-8 py-3 bg-gradient-to-r from-[#FA9500] to-[#EB6424] text-white font-semibold rounded-xl hover:scale-[1.03] shadow-md transition-transform duration-300 text-sm sm:text-base'>
                 <Send className='w-5 h-5' />
                 Send Message
               </button>

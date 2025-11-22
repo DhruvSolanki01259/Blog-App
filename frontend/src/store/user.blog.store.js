@@ -2,6 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_API_URL}/api/user`;
+axios.defaults.withCredentials = true;
 
 export const useBlogStore = create((set, get) => ({
   blogs: [],

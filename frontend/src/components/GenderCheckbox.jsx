@@ -1,4 +1,10 @@
-const GenderCheckbox = ({ selectedGender, onCheckboxChange }) => {
+const GenderCheckbox = ({
+  selectedGender,
+  onCheckboxChange,
+  theme = "light",
+}) => {
+  const textColor = theme === "dark" ? "text-[#EDEDED]" : "text-[#7C6A0A]";
+
   return (
     <div className='flex gap-4 mt-2'>
       {/* Male */}
@@ -11,7 +17,7 @@ const GenderCheckbox = ({ selectedGender, onCheckboxChange }) => {
           onChange={() => onCheckboxChange("boy")}
           className='w-4 h-4 accent-[#FA9500]'
         />
-        <span className='text-[#7C6A0A] font-medium'>Male</span>
+        <span className={`font-medium ${textColor}`}>Male</span>
       </label>
 
       {/* Female */}
@@ -24,7 +30,7 @@ const GenderCheckbox = ({ selectedGender, onCheckboxChange }) => {
           onChange={() => onCheckboxChange("girl")}
           className='w-4 h-4 accent-[#FA9500]'
         />
-        <span className='text-[#7C6A0A] font-medium'>Female</span>
+        <span className={`font-medium ${textColor}`}>Female</span>
       </label>
     </div>
   );

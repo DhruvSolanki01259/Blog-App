@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { useBlogStore } from "../store/blog.store";
+import { useBlogStore } from "../store/user.blog.store";
+import { useThemeStore } from "../store/theme.store";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 25 },
@@ -12,6 +13,7 @@ const fadeUp = (delay = 0) => ({
 
 const Blogs = () => {
   const { blogs, getBlogs, isLoading } = useBlogStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     getBlogs();
@@ -22,20 +24,30 @@ const Blogs = () => {
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
-  const featured = sortedBlogs.slice(0, 6); // top 6 as featured
+  const featured = sortedBlogs.filter((blog) => blog.isFeatured === true);
+
+  // Theme-based colors
+  const bgColor = theme === "light" ? "bg-[#FBF9F2]" : "bg-[#1E1E2F]";
+  const cardBg = theme === "light" ? "bg-white" : "bg-[#2B2B3A]";
+  const cardBorder =
+    theme === "light" ? "border-[#E9E2CE]" : "border-[#4B4B5A]";
+  const headingColor = theme === "light" ? "text-[#2B2B2B]" : "text-[#E0E0E0]";
+  const subTextColor = theme === "light" ? "text-[#6F6652]" : "text-[#CFCFCF]";
+  const linkColor = theme === "light" ? "text-[#C67A0E]" : "text-[#FFA550]";
 
   return (
-    <section className='min-h-screen w-full bg-[#FBF9F2] px-5 sm:px-10 md:px-16 py-20'>
+    <section
+      className={`min-h-screen w-full px-5 sm:px-10 md:px-16 py-20 ${bgColor}`}>
       {/* Page Title */}
       <motion.h1
         {...fadeUp(0)}
-        className='text-4xl sm:text-5xl font-extrabold text-[#2B2B2B] text-center mb-4'>
+        className={`text-4xl sm:text-5xl font-extrabold text-center mb-4 ${headingColor}`}>
         Explore All Blogs
       </motion.h1>
 
       <motion.p
         {...fadeUp(0.1)}
-        className='text-center max-w-2xl mx-auto text-[#6F6652] text-sm sm:text-lg mb-14'>
+        className={`text-center max-w-2xl mx-auto text-sm sm:text-lg mb-14 ${subTextColor}`}>
         Dive into the latest articles, tutorials, and project breakdowns written
         by me.
       </motion.p>
@@ -44,16 +56,17 @@ const Blogs = () => {
       <div className='max-w-6xl mx-auto mb-20'>
         <motion.h2
           {...fadeUp(0.2)}
-          className='text-2xl sm:text-3xl font-bold text-[#7C6A0A] mb-6'>
+          className={`text-2xl sm:text-3xl font-bold mb-6 ${headingColor}`}>
           Featured Posts
         </motion.h2>
 
         {isLoading && (
-          <p className='text-[#6F6652] text-center'>Loading blogs...</p>
+          <p className={`text-center ${subTextColor}`}>Loading blogs...</p>
         )}
-
         {!isLoading && featured.length === 0 && (
-          <p className='text-center text-[#6F6652]'>No featured posts yet.</p>
+          <p className={`text-center ${subTextColor}`}>
+            No featured posts yet.
+          </p>
         )}
 
         {/* Featured Blogs Grid */}
@@ -63,7 +76,7 @@ const Blogs = () => {
               <motion.div
                 key={blog._id}
                 {...fadeUp(0.1 * (i + 1))}
-                className='rounded-2xl border border-[#E9E2CE] bg-white p-5 shadow-sm hover:shadow-lg transition-all group cursor-pointer'>
+                className={`rounded-2xl border ${cardBorder} ${cardBg} p-5 shadow-sm hover:shadow-lg transition-all group cursor-pointer`}>
                 <div className='h-44 rounded-xl overflow-hidden mb-4'>
                   <img
                     src={blog.image}
@@ -72,17 +85,18 @@ const Blogs = () => {
                   />
                 </div>
 
-                <h3 className='text-lg font-semibold text-[#2B2B2B] group-hover:text-[#EB6424] transition'>
+                <h3
+                  className={`text-lg font-semibold group-hover:text-[#EB6424] transition ${headingColor}`}>
                   {blog.title}
                 </h3>
 
-                <p className='text-sm text-[#6F6652] mt-2 line-clamp-2'>
+                <p className={`text-sm mt-2 line-clamp-2 ${subTextColor}`}>
                   {blog.content}
                 </p>
 
                 <Link
                   to={`/blogs/${blog.slug}`}
-                  className='mt-3 inline-flex items-center gap-1 text-[#C67A0E] text-sm font-medium group-hover:gap-2 transition-all'>
+                  className={`mt-3 inline-flex items-center gap-1 font-medium ${linkColor} group-hover:gap-2 transition-all text-sm`}>
                   Read More <ArrowRight size={16} />
                 </Link>
               </motion.div>
@@ -94,16 +108,15 @@ const Blogs = () => {
       <div className='max-w-6xl mx-auto'>
         <motion.h2
           {...fadeUp(0.3)}
-          className='text-2xl sm:text-3xl font-bold text-[#7C6A0A] mb-6'>
+          className={`text-2xl sm:text-3xl font-bold mb-6 ${headingColor}`}>
           All Posts
         </motion.h2>
 
         {isLoading && (
-          <p className='text-[#6F6652] text-center'>Loading blogs...</p>
+          <p className={`text-center ${subTextColor}`}>Loading blogs...</p>
         )}
-
         {!isLoading && sortedBlogs.length === 0 && (
-          <p className='text-center text-[#6F6652]'>
+          <p className={`text-center ${subTextColor}`}>
             No blogs have been published yet.
           </p>
         )}
@@ -115,7 +128,7 @@ const Blogs = () => {
               <motion.div
                 key={blog._id}
                 {...fadeUp(0.1 * (i + 1))}
-                className='rounded-2xl border border-[#E9E2CE] bg-white p-5 shadow-sm hover:shadow-lg transition-all group cursor-pointer'>
+                className={`rounded-2xl border ${cardBorder} ${cardBg} p-5 shadow-sm hover:shadow-lg transition-all group cursor-pointer`}>
                 <div className='h-44 rounded-xl overflow-hidden mb-4'>
                   <img
                     src={blog.image}
@@ -124,17 +137,18 @@ const Blogs = () => {
                   />
                 </div>
 
-                <h3 className='text-lg font-semibold text-[#2B2B2B] group-hover:text-[#EB6424] transition'>
+                <h3
+                  className={`text-lg font-semibold group-hover:text-[#EB6424] transition ${headingColor}`}>
                   {blog.title}
                 </h3>
 
-                <p className='text-sm text-[#6F6652] mt-2 line-clamp-2'>
+                <p className={`text-sm mt-2 line-clamp-2 ${subTextColor}`}>
                   {blog.content}
                 </p>
 
                 <Link
                   to={`/blogs/${blog.slug}`}
-                  className='mt-3 inline-flex items-center gap-1 text-[#C67A0E] text-sm font-medium group-hover:gap-2 transition-all'>
+                  className={`mt-3 inline-flex items-center gap-1 font-medium ${linkColor} group-hover:gap-2 transition-all text-sm`}>
                   Read More <ArrowRight size={16} />
                 </Link>
               </motion.div>

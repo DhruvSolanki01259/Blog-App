@@ -1,6 +1,6 @@
 import { Check, X } from "lucide-react";
 
-const PasswordCriteria = ({ password }) => {
+const PasswordCriteria = ({ password, theme = "light" }) => {
   const criteria = [
     { label: "At least 6 characters", met: password.length >= 6 },
     { label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
@@ -8,6 +8,10 @@ const PasswordCriteria = ({ password }) => {
     { label: "Contains a number", met: /\d/.test(password) },
     { label: "Contains special character", met: /[^A-Za-z0-9]/.test(password) },
   ];
+
+  const textColor = theme === "dark" ? "text-[#EDEDED]" : "text-[#7C6A0A]";
+  const textFaded =
+    theme === "dark" ? "text-[#EDEDED]/50" : "text-[#7C6A0A]/50";
 
   return (
     <div className='mt-3 space-y-1'>
@@ -20,17 +24,14 @@ const PasswordCriteria = ({ password }) => {
           ) : (
             <X className='w-4 h-4 text-[#EB6424]/70 mr-2' />
           )}
-          <span
-            className={`${item.met ? "text-[#7C6A0A]" : "text-[#7C6A0A]/50"}`}>
-            {item.label}
-          </span>
+          <span className={item.met ? textColor : textFaded}>{item.label}</span>
         </div>
       ))}
     </div>
   );
 };
 
-const PasswordStrengthMeter = ({ password }) => {
+const PasswordStrengthMeter = ({ password, theme = "light" }) => {
   const getStrength = (pass) => {
     let strength = 0;
     if (pass.length >= 6) strength++;
@@ -50,6 +51,9 @@ const PasswordStrengthMeter = ({ password }) => {
     return "bg-green-600";
   };
 
+  const getBarBg = (theme) =>
+    theme === "dark" ? "bg-[#3B3B3B]" : "bg-[#FFDAC6]";
+
   const getStrengthText = (strength) => {
     if (strength === 0) return "Very Weak";
     if (strength === 1) return "Weak";
@@ -58,18 +62,29 @@ const PasswordStrengthMeter = ({ password }) => {
     return "Strong";
   };
 
+  const strengthTextColor =
+    theme === "dark"
+      ? strength < 2
+        ? "text-[#EB6424]"
+        : strength < 4
+        ? "text-[#FA9500]"
+        : "text-[#EDEDED]"
+      : strength < 2
+      ? "text-[#EB6424]"
+      : strength < 4
+      ? "text-[#FA9500]"
+      : "text-[#7C6A0A]";
+
   return (
     <div className='mt-3'>
       <div className='flex justify-between items-center mb-1'>
-        <span className='text-xs text-[#7C6A0A]/70'>Password Strength</span>
         <span
           className={`text-xs ${
-            strength < 2
-              ? "text-[#EB6424]"
-              : strength < 4
-              ? "text-[#FA9500]"
-              : "text-[#7C6A0A]"
+            theme === "dark" ? "text-[#EDEDED]/70" : "text-[#7C6A0A]/70"
           }`}>
+          Password Strength
+        </span>
+        <span className={`text-xs ${strengthTextColor}`}>
           {getStrengthText(strength)}
         </span>
       </div>
@@ -79,13 +94,16 @@ const PasswordStrengthMeter = ({ password }) => {
           <div
             key={index}
             className={`h-1.5 w-1/4 rounded-full transition-all duration-300 ${
-              index < strength ? `${getColor(strength)}` : "bg-[#FFDAC6]"
+              index < strength ? `${getColor(strength)}` : getBarBg(theme)
             }`}
           />
         ))}
       </div>
 
-      <PasswordCriteria password={password} />
+      <PasswordCriteria
+        password={password}
+        theme={theme}
+      />
     </div>
   );
 };

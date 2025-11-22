@@ -78,3 +78,66 @@ export const editProfile = async (req, res) => {
     return errorHandler(res, 500, "Internal Server Error");
   }
 };
+
+export const search = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "Search query is required",
+      });
+    }
+
+    const blogs = await Blog.find({
+      title: { $regex: query, $options: "i" },
+    }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      error: false,
+      message: "Search Results Fetched",
+      blogs,
+    });
+  } catch (error) {
+    console.error("Search Error:", error.message);
+    return errorHandler(res, 500, "Internal Server Error");
+  }
+};
+
+export const advanceSearch = async (req, res) => {
+  try {
+    const { title, category, content, featured } = req.query;
+
+    // Build dynamic filter object
+    const filter = {};
+
+    if (title) filter.title = { $regex: title, $options: "i" };
+    if (category) filter.category = { $regex: category, $options: "i" };
+    if (content) filter.content = { $regex: content, $options: "i" };
+    if (featured === "true") filter.featured = true;
+    if (featured === "false") filter.featured = false;
+
+    // Ensure at least one filter
+    if (Object.keys(filter).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide at least one search parameter",
+        blogs: [],
+      });
+    }
+
+    const blogs = await Blog.find(filter).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      blogs,
+      message: "Search results fetched successfully",
+    });
+  } catch (err) {
+    console.error("Advance Search Error:", err.message);
+    return errorHandler(res, 500, "Internal Server Error");
+  }
+};

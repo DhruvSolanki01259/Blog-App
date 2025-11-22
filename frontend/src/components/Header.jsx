@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, Sun, Moon, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuthStore } from "../store/auth.store";
 import { useThemeStore } from "../store/theme.store";
+import { useBlogStore } from "../store/user.blog.store";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,8 +15,9 @@ const Header = () => {
 
   const { user, isAuthenticated, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
+  const { searchQuery, setSearchQuery } = useBlogStore();
 
-  // Apply theme to document root
+  // Apply theme to <html>
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
@@ -32,7 +35,6 @@ const Header = () => {
 
   const navLinks = [
     { label: "Blogs", path: "/blogs" },
-    { label: "Advance-Search", path: "/advance-search" },
     { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
   ];
@@ -46,35 +48,66 @@ const Header = () => {
     }),
   };
 
+  // Theme-based classes
+  const headerBg =
+    theme === "light"
+      ? "bg-[#FAF7F2]/80 border-[#E5D9C4]"
+      : "bg-[#2B2B3A]/80 border-[#4B4B5A]";
+  const textColor = theme === "light" ? "text-[#4B3B2A]" : "text-[#E0E0E0]";
+  const inputBg =
+    theme === "light"
+      ? "bg-white border-[#E0C9A6]"
+      : "bg-[#3A3A4A] border-[#5A5A6A]";
+  const btnBg =
+    theme === "light"
+      ? "bg-[#FFF9F4] border-[#E5D9C4] text-[#7C6A0A]"
+      : "bg-[#2B2B3A] border-[#4B4B5A] text-[#E0E0E0]";
+
   return (
-    <header className='w-full fixed top-0 left-0 z-30 bg-[#FAF7F2]/80 backdrop-blur-md border-b border-[#E5D9C4] shadow-sm'>
+    <header
+      className={`w-full fixed top-0 left-0 z-30 backdrop-blur-md border-b shadow-sm ${headerBg}`}>
       <div className='max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4'>
-        {/* Logo / App Name */}
+        {/* LOGO */}
         <motion.h1
           onClick={() => handleNavigate("/")}
-          className='text-2xl sm:text-3xl font-bold tracking-tight cursor-pointer whitespace-nowrap select-none bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
+          className='text-2xl sm:text-3xl font-bold cursor-pointer bg-clip-text text-transparent bg-gradient-to-r from-[#FA9500] to-[#EB6424]'
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}>
           {APP_NAME}
         </motion.h1>
 
-        {/* Desktop Search Bar */}
+        {/* DESKTOP SEARCH */}
         <div
-          className={`hidden lg:flex items-center gap-2 bg-white border border-[#E0C9A6] rounded-full px-3 py-1.5 w-64 shadow-sm transition-all duration-200 ${
+          className={`hidden lg:flex items-center gap-2 rounded-full px-3 py-1.5 w-64 shadow-sm transition-all duration-200 ${inputBg} ${
             isSearchActive ? "ring-2 ring-[#EB6424]" : ""
           }`}>
-          <Search className='w-4 h-4 text-[#7C6A0A]' />
+          <Search
+            className={
+              theme === "light"
+                ? "w-4 h-4 text-[#7C6A0A]"
+                : "w-4 h-4 text-[#E0E0E0]"
+            }
+          />
           <input
             type='text'
-            placeholder='Search...'
-            onFocus={() => setIsSearchActive(true)}
+            placeholder='Search blogs...'
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              navigate("/advance-search");
+            }}
+            onFocus={() => {
+              setIsSearchActive(true);
+              navigate("/advance-search");
+            }}
             onBlur={() => setIsSearchActive(false)}
-            className='w-full outline-none bg-transparent text-sm text-[#4B3B2A] placeholder-[#A69374]'
+            className='w-full outline-none bg-transparent text-sm'
           />
         </div>
 
-        {/* Desktop Navigation Tabs */}
-        <nav className='hidden lg:flex items-center gap-6 text-[#4B3B2A] font-medium'>
+        {/* DESKTOP NAV */}
+        <nav
+          className={`hidden lg:flex items-center gap-6 font-medium ${textColor}`}>
           {navLinks.map((tab, i) => (
             <motion.a
               key={tab.path}
@@ -83,17 +116,18 @@ const Header = () => {
               variants={tabAnimation}
               initial='hidden'
               animate='visible'
-              className='hover:text-[#EB6424] transition cursor-pointer'>
+              className='hover:text-[#EB6424] cursor-pointer transition'>
               {tab.label}
             </motion.a>
           ))}
         </nav>
 
-        {/* Desktop Right Section */}
+        {/* DESKTOP RIGHT */}
         <div className='hidden lg:flex items-center gap-3'>
+          {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className='w-10 h-10 flex items-center justify-center rounded-full bg-[#FFF9F4] border border-[#E5D9C4] hover:bg-[#EB6424] hover:text-white transition text-[#7C6A0A]'>
+            className={`w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#EB6424] hover:text-white transition ${btnBg}`}>
             {theme === "light" ? (
               <Sun className='w-5 h-5' />
             ) : (
@@ -101,10 +135,11 @@ const Header = () => {
             )}
           </button>
 
+          {/* Auth Buttons */}
           {isAuthenticated && user ? (
             <motion.img
               src={user.profilePic || "/default-avatar.png"}
-              alt={user.username || "User"}
+              alt={user.username}
               className='w-10 h-10 rounded-full border-2 border-[#EB6424] object-cover cursor-pointer hover:scale-105 transition'
               onClick={() => handleNavigate("/profile")}
               initial={{ opacity: 0 }}
@@ -113,17 +148,17 @@ const Header = () => {
           ) : (
             <button
               onClick={() => handleNavigate("/signup")}
-              className='px-5 py-2 rounded-full border-2 border-[#EB6424] text-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
+              className='px-5 py-2 rounded-full border-2 border-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
               Sign Up
             </button>
           )}
         </div>
 
-        {/* Mobile Buttons */}
+        {/* MOBILE RIGHT */}
         <div className='flex lg:hidden items-center gap-2'>
           <button
             onClick={toggleTheme}
-            className='w-10 h-10 flex items-center justify-center rounded-full bg-[#FFF9F4] border border-[#E5D9C4] hover:bg-[#EB6424] hover:text-white transition text-[#7C6A0A]'>
+            className={`w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#EB6424] hover:text-white transition ${btnBg}`}>
             {theme === "light" ? (
               <Sun className='w-5 h-5' />
             ) : (
@@ -132,14 +167,14 @@ const Header = () => {
           </button>
 
           <button
-            className='p-2 rounded-md text-[#4B3B2A] hover:bg-[#F2E9E1] transition flex-shrink-0'
-            onClick={() => setIsOpen(!isOpen)}>
+            onClick={() => setIsOpen(!isOpen)}
+            className={`p-2 rounded-md ${textColor} hover:bg-opacity-10 hover:bg-current transition`}>
             {isOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* MOBILE DROPDOWN */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -147,8 +182,13 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            className='lg:hidden bg-[#FFF9F4] border-t border-[#E5D9C4] shadow-md'>
-            <div className='flex flex-col px-6 py-4 space-y-3 text-[#4B3B2A] font-medium'>
+            className={`lg:hidden shadow-md ${
+              theme === "light"
+                ? "bg-[#FFF9F4] border-t border-[#E5D9C4]"
+                : "bg-[#2B2B3A] border-t border-[#4B4B5A]"
+            }`}>
+            <div
+              className={`flex flex-col px-6 py-4 space-y-3 font-medium ${textColor}`}>
               {navLinks.map((tab, i) => (
                 <motion.button
                   key={tab.path}
@@ -162,17 +202,17 @@ const Header = () => {
                 </motion.button>
               ))}
 
-              {/* Mobile Auth Section */}
-              {isAuthenticated && user ? (
-                <div className='flex flex-col gap-3 mt-2'>
+              {/* Mobile Auth */}
+              {isAuthenticated ? (
+                <>
                   <motion.button
                     onClick={() => handleNavigate("/profile")}
                     custom={4}
                     variants={tabAnimation}
                     initial='hidden'
                     animate='visible'
-                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#EB6424] text-[#EB6424] bg-white hover:bg-[#EB6424] hover:text-white font-semibold transition'>
-                    <User className='w-5 h-5' /> Go to Profile
+                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
+                    <User className='w-5 h-5' /> Profile
                   </motion.button>
 
                   <motion.button
@@ -181,10 +221,10 @@ const Header = () => {
                     variants={tabAnimation}
                     initial='hidden'
                     animate='visible'
-                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#E63946] text-[#E63946] bg-white hover:bg-[#E63946] hover:text-white font-semibold transition'>
+                    className='flex items-center justify-center gap-2 px-5 py-2 rounded-md border-2 border-[#E63946] hover:bg-[#E63946] hover:text-white font-semibold transition'>
                     <LogOut className='w-5 h-5' /> Logout
                   </motion.button>
-                </div>
+                </>
               ) : (
                 <motion.button
                   onClick={() => handleNavigate("/signup")}
@@ -192,7 +232,7 @@ const Header = () => {
                   variants={tabAnimation}
                   initial='hidden'
                   animate='visible'
-                  className='px-5 py-2 rounded-md border-2 border-[#EB6424] text-[#EB6424] bg-white hover:bg-[#EB6424] hover:text-white font-semibold transition text-center'>
+                  className='px-5 py-2 rounded-md border-2 border-[#EB6424] hover:bg-[#EB6424] hover:text-white font-semibold transition'>
                   Sign Up
                 </motion.button>
               )}

@@ -13,19 +13,26 @@ import { connectDB } from "./database/connectDB.js";
 import "dotenv/config";
 
 const app = express();
-
 const PORT = process.env.PORT || 8000;
 
-app.use(express.json());
+// MIDDLEWARES
 app.use(cookieParser());
-app.use(cors({ origin: `${process.env.CLIENT_URL}`, credentials: true }));
+app.use(express.json());
 
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+// ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Listen the APP
+// START SERVER
 app.listen(PORT, () => {
-  console.log("Server is Running on PORT: ", PORT);
+  console.log(`Server running on PORT ${PORT}`);
   connectDB();
 });
