@@ -47,11 +47,14 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:8000/api/user/contact", {
-        name,
-        email,
-        message,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/contact`,
+        {
+          name,
+          email,
+          message,
+        }
+      );
 
       toast.success("Message sent successfully!");
       setName("");
