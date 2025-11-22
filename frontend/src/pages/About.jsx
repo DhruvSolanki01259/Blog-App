@@ -29,6 +29,8 @@ const About = () => {
       ? "hover:bg-[#FA9500] hover:text-white"
       : "hover:border-[#FA9500] hover:text-[#FA9500]";
 
+  const socialText = theme === "light" ? "text-[#4B3B2A]" : "text-white";
+
   return (
     <section className='min-h-screen w-full py-16 px-4 sm:px-6 md:px-10 lg:px-20 flex justify-center'>
       <motion.div
@@ -121,7 +123,7 @@ const About = () => {
               href={item.url}
               target='_blank'
               rel='noreferrer'
-              className={`group p-4 flex items-center justify-between border ${cardBorder} rounded-xl ${cardBg} transition-all duration-300 shadow-sm text-white border-white ${socialHover}`}>
+              className={`group p-4 flex items-center justify-between border ${cardBorder} rounded-xl ${cardBg} transition-all duration-300 shadow-sm ${socialText} ${socialHover}`}>
               <span className='font-medium text-sm sm:text-base'>
                 {item.name}
               </span>
